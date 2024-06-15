@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 import {
 	Form,
@@ -25,6 +26,8 @@ const formSchema = z.object({
 });
 
 export default function CollectionForm() {
+	const router = useRouter();
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -85,8 +88,8 @@ export default function CollectionForm() {
 								<FormControl>
 									<ImageUpload
 										value={field.value ? [field.value] : []}
-                    onChange={(url) => field.onChange(url)}
-                    onRemove={() => field.onChange("")}
+										onChange={(url) => field.onChange(url)}
+										onRemove={() => field.onChange("")}
 									/>
 								</FormControl>
 								<FormMessage />
@@ -94,7 +97,19 @@ export default function CollectionForm() {
 						)}
 					/>
 
-					<Button type="submit">Submit</Button>
+					<div className="flex gap-10">
+						<Button type="submit" className="bg-blue-1 text-white">
+							Submit
+						</Button>
+
+						<Button
+							type="button"
+							className="bg-blue-1 text-white"
+							onClick={() => router.push("/collections")}
+						>
+							Discard
+						</Button>
+					</div>
 				</form>
 			</Form>
 		</div>
