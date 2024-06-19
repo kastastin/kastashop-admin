@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 import {
 	Form,
@@ -28,6 +30,8 @@ const formSchema = z.object({
 export default function CollectionForm() {
 	const router = useRouter();
 
+	const [isLoading, setIsLoading] = useState(false);
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -38,7 +42,22 @@ export default function CollectionForm() {
 	});
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values);
+		try {
+			setIsLoading(true);
+			const response = await fetch("/api/collections", {
+				method: "POST",
+				body: JSON.stringify(values),
+			});
+
+			if (response.ok) {
+				setIsLoading(false);
+				toast.success("Collection created!");
+				router.push("/collections");
+			}
+		} catch (err) {
+			console.log("[POST CollectionForm] error:", err);
+			toast.error("Something went wrong!");
+		}
 	}
 
 	return (
