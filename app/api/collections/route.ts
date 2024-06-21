@@ -4,6 +4,19 @@ import { auth } from "@clerk/nextjs/server";
 import { connectToDB } from "@/lib/mongoDB";
 import Collection from "@/lib/models/Collection";
 
+export const GET = async (req: NextRequest) => {
+	try {
+		await connectToDB();
+
+		const collections = await Collection.find().sort({ createdAt: "desc" });
+
+		return NextResponse.json(collections, { status: 200 });
+	} catch (err) {
+		console.log("[GET /api/collections] error:", err);
+		return new NextResponse("Internal Server Error", { status: 500 });
+	}
+};
+
 export const POST = async (req: NextRequest) => {
 	try {
 		const { userId } = auth();
