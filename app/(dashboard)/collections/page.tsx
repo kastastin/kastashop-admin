@@ -12,7 +12,7 @@ import { columns } from "@/components/collections/CollectionColumns";
 export default function CollectionsPage() {
 	const router = useRouter();
 
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 	const [collections, setCollections] = useState([]);
 
 	useEffect(() => {

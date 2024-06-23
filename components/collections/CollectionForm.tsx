@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import Delete from "@/components/custom-ui/Delete";
 import ImageUpload from "@/components/custom-ui/ImageUpload";
 
 const formSchema = z.object({
@@ -27,31 +28,43 @@ const formSchema = z.object({
 	image: z.string(),
 });
 
-export default function CollectionForm() {
+export default function CollectionForm({
+	initialData,
+}: {
+	initialData?: CollectionType | null;
+}) {
 	const router = useRouter();
 
 	const [isLoading, setIsLoading] = useState(false);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-		defaultValues: {
-			title: "",
-			description: "",
-			image: "",
-		},
+		defaultValues: initialData
+			? initialData
+			: {
+					title: "",
+					description: "",
+					image: "",
+			  },
 	});
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
 			setIsLoading(true);
-			const response = await fetch("/api/collections", {
+
+			const url = initialData
+				? `/api/collections/${initialData._id}`
+				: "/api/collections";
+
+			const response = await fetch(url, {
 				method: "POST",
 				body: JSON.stringify(values),
 			});
 
 			if (response.ok) {
 				setIsLoading(false);
-				toast.success("Collection created!");
+				toast.success(`Collection ${initialData ? "updated" : "created"}!`);
+				window.location.href = "/collections";
 				router.push("/collections");
 			}
 		} catch (err) {
@@ -60,9 +73,27 @@ export default function CollectionForm() {
 		}
 	}
 
+	function handleKeyPress(
+		e:
+			| React.KeyboardEvent<HTMLInputElement>
+			| React.KeyboardEvent<HTMLTextAreaElement>
+	) {
+		if (e.key === "Enter") {
+			e.preventDefault();
+		}
+	}
+
 	return (
 		<div className="p-10">
-			<p className="text-heading2-bold">Create Collection</p>
+			{initialData ? (
+				<div className="flex justify-between items-center">
+					<p className="text-heading2-bold">Edit Collection</p>
+					<Delete id={initialData._id} />
+				</div>
+			) : (
+				<p className="text-heading2-bold">Create Collection</p>
+			)}
+
 			<Separator className="mt-4 mb-7 bg-grey-1" />
 
 			<Form {...form}>
@@ -75,7 +106,11 @@ export default function CollectionForm() {
 							<FormItem>
 								<FormLabel>Title</FormLabel>
 								<FormControl>
-									<Input placeholder="Title" {...field} />
+									<Input
+										placeholder="Title"
+										onKeyDown={handleKeyPress}
+										{...field}
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
@@ -90,7 +125,12 @@ export default function CollectionForm() {
 							<FormItem>
 								<FormLabel>Description</FormLabel>
 								<FormControl>
-									<Textarea placeholder="Description" rows={5} {...field} />
+									<Textarea
+										placeholder="Description"
+										rows={5}
+										onKeyDown={handleKeyPress}
+										{...field}
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
