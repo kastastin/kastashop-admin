@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import Delete from "@/components/custom-ui/Delete";
 import ImageUpload from "@/components/custom-ui/ImageUpload";
 import MultiText from "@/components/custom-ui/MultiText";
+import MultiSelect from "@/components/custom-ui/MultiSelect";
 
 const formSchema = z.object({
 	title: z.string().min(2).max(20),
@@ -44,11 +45,21 @@ export default function ProductForm({
 	const router = useRouter();
 
 	const [isLoading, setIsLoading] = useState(false);
+	const [collections, setCollections] = useState<CollectionType[]>([]);
+
+	useEffect(() => {
+		fetchCollections();
+	}, []);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: initialData
-			? initialData
+			? {
+					...initialData,
+					collections: initialData.collections.map(
+						(collection) => collection._id
+					),
+			  }
 			: {
 					title: "",
 					description: "",
@@ -95,6 +106,20 @@ export default function ProductForm({
 	) {
 		if (e.key === "Enter") {
 			e.preventDefault();
+		}
+	}
+
+	async function fetchCollections() {
+		try {
+			setIsLoading(true);
+			const response = await fetch("/api/collections", { method: "GET" });
+			const data = await response.json();
+
+			setCollections(data);
+			setIsLoading(false);
+		} catch (err) {
+			console.log("[dashboard: fetchCollections] error:", err);
+			toast.error("Something went wrong!");
 		}
 	}
 
@@ -260,6 +285,37 @@ export default function ProductForm({
 								</FormItem>
 							)}
 						/>
+
+						{/* Collections */}
+						{collections.length > 0 && (
+							<FormField
+								control={form.control}
+								name="collections"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Collections</FormLabel>
+										<FormControl>
+											<MultiSelect
+												placeholder="Collections"
+												collections={collections}
+												value={field.value}
+												onChange={(_id) =>
+													field.onChange([...field.value, _id])
+												}
+												onRemove={(idToRemove) =>
+													field.onChange([
+														...field.value.filter(
+															(collectionId) => collectionId !== idToRemove
+														),
+													])
+												}
+											/>
+										</FormControl>
+										<FormMessage className="text-red-1" />
+									</FormItem>
+								)}
+							/>
+						)}
 					</div>
 
 					<div className="flex gap-10">
