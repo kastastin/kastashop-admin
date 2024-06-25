@@ -22,7 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import Delete from "@/components/custom-ui/Delete";
 import ImageUpload from "@/components/custom-ui/ImageUpload";
 import MultiText from "@/components/custom-ui/MultiText";
-import MultiSelect from "@/components/custom-ui/MultiSelect";
+import Combobox from "@/components/custom-ui/Combobox";
 
 const formSchema = z.object({
 	title: z.string().min(2).max(20),
@@ -295,7 +295,8 @@ export default function ProductForm({
 									<FormItem>
 										<FormLabel>Collections</FormLabel>
 										<FormControl>
-											<MultiSelect
+											<Combobox collections={collections} />
+											{/* <MultiSelect
 												placeholder="Collections"
 												collections={collections}
 												value={field.value}
@@ -309,7 +310,7 @@ export default function ProductForm({
 														),
 													])
 												}
-											/>
+											/> */}
 										</FormControl>
 										<FormMessage className="text-red-1" />
 									</FormItem>
