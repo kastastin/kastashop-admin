@@ -4,7 +4,6 @@ import { useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
 interface MultiTextProps {
@@ -22,7 +21,7 @@ export default function MultiText({
 }: MultiTextProps) {
 	const [inputValue, setInputValue] = useState("");
 
-	function addTag(item: string) {
+	function addValue(item: string) {
 		onChange(item);
 		setInputValue("");
 	}
@@ -36,22 +35,21 @@ export default function MultiText({
 				onKeyDown={(e) => {
 					if (e.key === "Enter") {
 						e.preventDefault();
-						addTag(inputValue);
+						addValue(inputValue);
 					}
 				}}
 			/>
 
 			<div className="flex flex-wrap gap-1 mt-4">
-				{value.map((tag, i) => (
+				{value.map((item, i) => (
 					<Badge key={i} className="bg-grey-1 text-white">
-						{tag}
-						<Button
-							size="sm"
+						{item}
+						<button
 							className="ml-1 rounded-full outline-none hover:bg-red-1"
-							onClick={() => onRemove(tag)}
+							onClick={() => onRemove(item)}
 						>
 							<X className="size-3" />
-						</Button>
+						</button>
 					</Badge>
 				))}
 			</div>

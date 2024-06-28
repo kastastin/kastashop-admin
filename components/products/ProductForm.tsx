@@ -317,6 +317,62 @@ export default function ProductForm({
 								)}
 							/>
 						)}
+
+						{/* Colors */}
+						<FormField
+							control={form.control}
+							name="colors"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Colors</FormLabel>
+									<FormControl>
+										<MultiText
+											placeholder="Colors"
+											value={field.value}
+											onChange={(color) =>
+												field.onChange([...field.value, color])
+											}
+											onRemove={(colorToRemove) =>
+												field.onChange([
+													...field.value.filter(
+														(color) => color !== colorToRemove
+													),
+												])
+											}
+										/>
+									</FormControl>
+									<FormMessage className="text-red-1" />
+								</FormItem>
+							)}
+						/>
+
+						{/* Sizes */}
+						<FormField
+							control={form.control}
+							name="sizes"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Sizes</FormLabel>
+									<FormControl>
+										<MultiText
+											placeholder="Sizes"
+											value={field.value}
+											onChange={(size) =>
+												field.onChange([...field.value, size])
+											}
+											onRemove={(sizeToRemove) =>
+												field.onChange([
+													...field.value.filter(
+														(size) => size !== sizeToRemove
+													),
+												])
+											}
+										/>
+									</FormControl>
+									<FormMessage className="text-red-1" />
+								</FormItem>
+							)}
+						/>
 					</div>
 
 					<div className="flex gap-10">
