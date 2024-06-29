@@ -15,22 +15,22 @@ import {
 	AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
 
-import { Button } from "@/components/ui/button";
-
-export default function Delete({ id }: { id: string }) {
+export default function Delete({ id, item }: { id: string; item: string }) {
 	const [isLoading, setIsLoading] = useState(false);
 
 	async function onDelete() {
 		try {
 			setIsLoading(true);
-			const response = await fetch(`/api/collections/${id}`, {
+			const itemType = item === "product" ? "products" : "collections";
+
+			const response = await fetch(`/api/${itemType}/${id}`, {
 				method: "DELETE",
 			});
 
 			if (response.ok) {
 				setIsLoading(false);
-				window.location.href = "/collections";
-				toast.success("Collection is deleted!");
+				window.location.href = `/${itemType}`;
+				toast.success(`${item} is deleted!`);
 			}
 		} catch (err) {
 			console.log(err);
@@ -53,8 +53,8 @@ export default function Delete({ id }: { id: string }) {
 					</AlertDialogTitle>
 
 					<AlertDialogDescription>
-						This action cannot be undone. This will permanently delete your
-						collection.
+						This action cannot be undone. This will permanently delete your{" "}
+						{item}.
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 

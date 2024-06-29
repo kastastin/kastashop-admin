@@ -33,7 +33,7 @@ export const POST = async (req: NextRequest) => {
 			description,
 			media,
 			category,
-			collections,
+			collection,
 			tags,
 			sizes,
 			colors,
@@ -51,7 +51,7 @@ export const POST = async (req: NextRequest) => {
 			description,
 			media,
 			category,
-			collections,
+			collection,
 			tags,
 			sizes,
 			colors,
@@ -60,6 +60,11 @@ export const POST = async (req: NextRequest) => {
 		});
 
 		await newProduct.save();
+
+		// if (collection) {
+		// 	collection.products.push(newProduct._id);
+		// 	await collection.save();
+		// }
 
 		// if (collections) {
 		// 	for (const collectionId of collections) {

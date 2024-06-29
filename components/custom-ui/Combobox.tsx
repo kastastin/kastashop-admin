@@ -21,11 +21,19 @@ import {
 
 export default function Combobox({
 	collections,
+	comboboxValue,
+	onChange,
 }: {
 	collections: CollectionType[];
+	comboboxValue: string;
+	onChange: (value: string) => void;
 }) {
 	const [open, setOpen] = React.useState(false);
 	const [value, setValue] = React.useState("");
+
+	React.useEffect(() => {
+		setValue(comboboxValue);
+	}, [comboboxValue]);
 
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
@@ -53,7 +61,11 @@ export default function Combobox({
 									key={collection._id}
 									value={collection.title}
 									onSelect={(currentValue) => {
-										setValue(currentValue === value ? "" : currentValue);
+										// setValue(currentValue === value ? "" : currentValue);
+										// setOpen(false);
+										const newValue = currentValue === value ? "" : currentValue;
+										setValue(newValue);
+										onChange(newValue);
 										setOpen(false);
 									}}
 								>

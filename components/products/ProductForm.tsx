@@ -29,7 +29,7 @@ const formSchema = z.object({
 	description: z.string().min(2).max(500).trim(),
 	media: z.array(z.string()),
 	category: z.string(),
-	collections: z.array(z.string()),
+	collection: z.string(),
 	tags: z.array(z.string()),
 	sizes: z.array(z.string()),
 	colors: z.array(z.string()),
@@ -54,18 +54,13 @@ export default function ProductForm({
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: initialData
-			? {
-					...initialData,
-					collections: initialData.collections.map(
-						(collection) => collection._id
-					),
-			  }
+			? initialData
 			: {
 					title: "",
 					description: "",
 					media: [],
 					category: "",
-					collections: [],
+					collection: "",
 					tags: [],
 					sizes: [],
 					colors: [],
@@ -128,7 +123,7 @@ export default function ProductForm({
 			{initialData ? (
 				<div className="flex justify-between items-center">
 					<p className="text-heading2-bold">Edit Product</p>
-					<Delete id={initialData._id} />
+					<Delete id={initialData._id} item="product" />
 				</div>
 			) : (
 				<p className="text-heading2-bold">Create Product</p>
@@ -286,31 +281,22 @@ export default function ProductForm({
 							)}
 						/>
 
-						{/* Collections */}
+						{/* Collection */}
 						{collections.length > 0 && (
 							<FormField
 								control={form.control}
-								name="collections"
+								name="collection"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Collections</FormLabel>
+										<FormLabel>Collection</FormLabel>
 										<FormControl>
-											<Combobox collections={collections} />
-											{/* <MultiSelect
-												placeholder="Collections"
+											<Combobox
 												collections={collections}
-												value={field.value}
-												onChange={(_id) =>
-													field.onChange([...field.value, _id])
+												comboboxValue={field.value}
+												onChange={(selectedCollection) =>
+													field.onChange(selectedCollection)
 												}
-												onRemove={(idToRemove) =>
-													field.onChange([
-														...field.value.filter(
-															(collectionId) => collectionId !== idToRemove
-														),
-													])
-												}
-											/> */}
+											/>
 										</FormControl>
 										<FormMessage className="text-red-1" />
 									</FormItem>
